@@ -1,0 +1,52 @@
+local loadingScreenGui = Instance.new("ScreenGui")
+loadingScreenGui.Name = "LoadingScreen"
+loadingScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local background = Instance.new("Frame")
+background.Size = UDim2.new(1, 0, 1, 0)
+background.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+background.BorderSizePixel = 0
+background.Parent = loadingScreenGui
+
+local logo = Instance.new("ImageLabel")
+logo.Size = UDim2.new(0.5, 0, 0.5, 0)
+logo.Position = UDim2.new(0.5, -100, 0.5, -100)
+logo.AnchorPoint = Vector2.new(0.5, 0.5)
+logo.Image = "rbxassetid://4483345998"
+logo.Parent = background
+
+local loadingText = Instance.new("TextLabel")
+loadingText.Text = "Loading..."
+loadingText.Size = UDim2.new(0, 200, 0, 50)
+loadingText.Position = UDim2.new(0.5, -100, 0.8, -25)
+loadingText.Font = Enum.Font.SourceSansBold
+loadingText.TextSize = 24
+loadingText.TextColor3 = Color3.new(1, 1, 1)
+loadingText.Parent = background
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Text = "Aries GUI"
+title.Size = UDim2.new(0, 200, 0, 50)
+title.Position = UDim2.new(0.5, -100, 0.1, -25) -- Adjust position as needed
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 36
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Parent = background
+
+-- Fade in animation
+background.BackgroundTransparency = 1 -- Start fully transparent
+background:TweenSizeAndPosition(
+    UDim2.new(1, 0, 1, 0), -- End size
+    UDim2.new(0, 0, 0, 0), -- End position
+    Enum.EasingDirection.InOut,
+    Enum.EasingStyle.Quad,
+    1, -- Duration
+    true
+)
+
+-- Simulate loading time
+wait(10)
+
+-- Destroy the loading screen after 10 seconds
+loadingScreenGui:Destroy()
