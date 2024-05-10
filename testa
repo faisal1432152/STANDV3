@@ -1,0 +1,89 @@
+-- Initialize variables
+local isFlying = false
+local isAntiKillActivated = false
+local buttonWidth = 100
+local buttonHeight = 50
+local flyButtonX = 50
+local flyButtonY = 50
+local antiKillButtonX = 50
+local antiKillButtonY = 150
+local hoverAnimationOffset = 5
+
+-- Function to toggle flying
+local function toggleFly()
+    isFlying = not isFlying
+    if isFlying then
+        -- Code to enable flying
+        print("Flying enabled!")
+    else
+        -- Code to disable flying
+        print("Flying disabled!")
+    end
+end
+
+-- Function to toggle anti-kill
+local function toggleAntiKill()
+    isAntiKillActivated = not isAntiKillActivated
+    if isAntiKillActivated then
+        -- Code to activate anti-kill
+        print("Anti-kill activated!")
+    else
+        -- Code to deactivate anti-kill
+        print("Anti-kill deactivated!")
+    end
+end
+
+-- Function to check if mouse is within button area
+local function isMouseInside(x, y, buttonX, buttonY, buttonWidth, buttonHeight)
+    return x >= buttonX and x <= buttonX + buttonWidth and y >= buttonY and y <= buttonY + buttonHeight
+end
+
+-- Function called when mouse is moved
+function love.mousemoved(x, y, dx, dy)
+    -- Check if mouse is over fly button
+    if isMouseInside(x, y, flyButtonX, flyButtonY, buttonWidth, buttonHeight) then
+        flyButtonY = 50 + hoverAnimationOffset
+    else
+        flyButtonY = 50
+    end
+
+    -- Check if mouse is over anti-kill button
+    if isMouseInside(x, y, antiKillButtonX, antiKillButtonY, buttonWidth, buttonHeight) then
+        antiKillButtonY = 150 + hoverAnimationOffset
+    else
+        antiKillButtonY = 150
+    end
+end
+
+-- Function called when mouse is clicked
+function love.mousepressed(x, y, button)
+    -- Check if left mouse button is clicked
+    if button == 1 then
+        -- Check if mouse is clicked within fly button area
+        if isMouseInside(x, y, flyButtonX, flyButtonY, buttonWidth, buttonHeight) then
+            toggleFly()
+        end
+        -- Check if mouse is clicked within anti-kill button area
+        if isMouseInside(x, y, antiKillButtonX, antiKillButtonY, buttonWidth, buttonHeight) then
+            toggleAntiKill()
+        end
+    end
+end
+
+-- Function called to draw graphics
+function love.draw()
+    -- Set background color
+    love.graphics.setBackgroundColor(255, 255, 255)
+    
+    -- Draw fly button
+    love.graphics.setColor(0, 255, 0)
+    love.graphics.rectangle('fill', flyButtonX, flyButtonY, buttonWidth, buttonHeight)
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.print("Fly", flyButtonX + 30, flyButtonY + 15)
+
+    -- Draw anti-kill button
+    love.graphics.setColor(255, 0, 0)
+    love.graphics.rectangle('fill', antiKillButtonX, antiKillButtonY, buttonWidth, buttonHeight)
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.print("Anti-Kill", antiKillButtonX + 10, antiKillButtonY + 15)
+end
