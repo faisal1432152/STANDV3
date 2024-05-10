@@ -1,0 +1,105 @@
+-- Function to apply Godmode
+local function applyGodmode()
+    -- Intercept RemoteFunction calls
+    local gmt = getrawmetatable(game)
+    setreadonly(gmt, false)
+    local old = gmt.__namecall
+    gmt.__namecall = newcclosure(function(self, ...)
+        local args = {...}
+        -- Ignore certain RemoteFunction calls
+        if tostring(args[1]) == "BreathingHAMON" or
+           tostring(args[1]) == "TeleportDetect" or
+           tostring(args[1]) == "CHECKER_1" or
+           tostring(args[1]) == "CHECKER" or
+           tostring(args[1]) == "GUI_CHECK" or
+           tostring(args[1]) == "OneMoreTime" or
+           tostring(args[1]) == "checkingSPEED" or
+           tostring(args[1]) == "BANREMOTE" or
+           tostring(args[1]) == "PERMAIDBAN" or
+           tostring(args[1]) == "KICKREMOTE" or
+           tostring(args[1]) == "BR_KICKPC" then
+            return
+        end
+        return old(self, ...)
+    end)
+
+    -- Find a player with Godmode enabled
+    local godmodePlayer = nil
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.Name ~= game.Players.LocalPlayer.Name then
+            godmodePlayer = player
+            break
+        end
+    end
+
+    -- If a player with Godmode is found, proceed
+    if godmodePlayer then
+        -- Teleport to the player with Godmode
+        game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = godmodePlayer.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, 0, -3)
+
+        -- Say a message to the player with Godmode
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Knock me and grab me please!", "All")
+
+        -- Wait for the player with Godmode to grab
+        game.Players.LocalPlayer.Character:WaitForChild("GRABBING_CONSTRAINT")
+
+        -- Set the FallenPartsDestroyHeight to a low value to avoid falling
+        game:GetService("Workspace").FallenPartsDestroyHeight = -500
+
+        -- Set the character's MaxHealth to a high value
+        game.Players.LocalPlayer.Character.Humanoid.MaxHealth = 1000
+        wait(0.2)
+
+        -- Set the character's RigType to R6
+        game.Players.LocalPlayer.Character.Humanoid.RigType = Enum.HumanoidRigType.R6
+        wait(0.2)
+
+        -- Enable Combat and bind to RenderStep
+        local function enableCombat()
+            if game.Players.LocalPlayer.Backpack:FindFirstChild("Combat") then
+                game.Players.LocalPlayer.Backpack:FindFirstChild("Combat").Parent = game.Players.LocalPlayer.Character
+            end
+            game.Players.LocalPlayer.Character:FindFirstChild("Combat"):Activate()
+            game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = godmodePlayer.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, 0, 3)
+        end
+        game:GetService('RunService'):BindToRenderStep("fe", 0, enableCombat)
+
+        -- Wait until the player with Godmode gets K.O.'d
+        repeat wait() until godmodePlayer.Character:FindFirstChild("BodyEffects")["K.O"].Value == true
+
+        -- Unbind from RenderStep and reset character's position
+        game:GetService('RunService'):UnbindFromRenderStep("fe")
+        wait(0.5)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, -450, 0)
+
+        -- Disable RagdollConstraints
+        for _, v in pairs(game.Players.LocalPlayer.Character:FindFirstChild("RagdollConstraints"):GetChildren()) do
+            if v:IsA("BallSocketConstraint") then
+                v.Enabled = false
+            end
+        end
+        game.Players.LocalPlayer.Character:FindFirstChild("RagdollConstraints").LTUP.Enabled = true
+
+        -- Bind to RenderStep to update LowerTorso position
+        game:GetService('RunService'):BindToRenderStep("fe", 0, function()
+            game.Players.LocalPlayer.Character:FindFirstChild("LowerTorso").CFrame = CFrame.new(godmodePlayer.Character.UpperTorso.Position.X, godmodePlayer.Character.UpperTorso.Position.Y + 0.4, godmodePlayer.Character.UpperTorso.Position.Z) * CFrame.new(0, 0, 0)
+        end)
+
+        -- Wait for grabbing constraint to be removed
+        spawn(function()
+            while wait(0.5) do
+                if godmodePlayer.Character:FindFirstChild("GRABBING_CONSTRAINT") then
+                    game:GetService('RunService'):UnbindFromRenderStep("fe")
+                    break
+                else
+                    game:GetService("ReplicatedStorage").MainEvent:FireServer('Grabbing', false)
+                end
+            end
+        end)
+    else
+        warn("No player with Godmode found.")
+    end
+end
+
+-- Apply Godmode when the function is executed
+applyGodmode()
