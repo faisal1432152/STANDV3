@@ -1,0 +1,65 @@
+-- God Mode Script
+
+-- Settings
+local settings = {
+    godV2 = true,
+    godV3 = true,
+    godblock = true,
+    autoblock = true,
+    hideblock = true,
+    antislow = true,
+    antieffect = true
+}
+
+-- Function to apply God mode V2
+local function applyGodV2()
+    local character = game:GetService("Players").LocalPlayer.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.Health = 0
+            local newCharacter = game:GetService("Workspace"):WaitForChild(game:GetService("Players").LocalPlayer.Name)
+            if newCharacter then
+                newCharacter:WaitForChild("RagdollConstraints"):Destroy()
+                local spoofFolder = Instance.new('Folder', newCharacter)
+                spoofFolder.Name = 'FULLY_LOADED_CHAR'
+                game:GetService("Players").LocalPlayer.Character.BodyEffects.Defense:Destroy()
+                local defense = Instance.new("IntValue", game:GetService("Players").LocalPlayer.Character.BodyEffects)
+                defense.Name = "Defense"
+                defense.Value = 101
+                game:GetService("Players").LocalPlayer.Character.BodyEffects.Armor:Destroy()
+                local cloneArmor = Instance.new("IntValue")
+                cloneArmor.Name = "Armor"
+                cloneArmor.Value = 101
+                cloneArmor.Parent = game:GetService("Players").LocalPlayer.Character.BodyEffects
+            end
+        end
+    end
+end
+
+-- Function to apply God block
+local function applyGodblock()
+    local currentTimeBlock = game:GetService("Players").LocalPlayer.Character:WaitForChild("BodyEffects"):WaitForChild("Defense"):WaitForChild("CurrentTimeBlock")
+    if currentTimeBlock then
+        currentTimeBlock:Destroy()
+    end
+end
+
+-- Main function to apply God mode
+local function applyGodMode()
+    if settings.godV2 then
+        applyGodV2()
+    end
+    if settings.godblock then
+        applyGodblock()
+    end
+    -- Add other functionalities here like GodV3, autoblock, hideblock, antislow, antieffect
+end
+
+-- Apply God mode when character is added
+game:GetService("Players").LocalPlayer.CharacterAdded:Connect(applyGodMode)
+
+-- Apply God mode immediately if character already exists
+if game:GetService("Players").LocalPlayer.Character then
+    applyGodMode()
+end
