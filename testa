@@ -1,0 +1,94 @@
+-- Define function for creating gradient frames
+local function createGradientFrame(parent, color1, color2)
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1, 0, 1, 0)
+    frame.BackgroundTransparency = 1
+    
+    local UIGradient = Instance.new("UIGradient")
+    UIGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, color1),
+        ColorSequenceKeypoint.new(1, color2)
+    })
+    UIGradient.Rotation = 45
+    UIGradient.Parent = frame
+    
+    frame.Parent = parent
+    return frame
+end
+
+-- Create loading screen GUI
+local loadingScreenGui = Instance.new("ScreenGui")
+loadingScreenGui.Name = "LoadingScreen"
+loadingScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create background
+local background = createGradientFrame(loadingScreenGui, Color3.fromRGB(42, 42, 42), Color3.fromRGB(21, 21, 21))
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Text = "Aries GUI"
+title.Size = UDim2.new(0, 200, 0, 50)
+title.Position = UDim2.new(0.5, -100, 0.2, -25)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 36
+title.TextColor3 = Color3.new(0, 0, 1) -- Blue color
+title.BackgroundTransparency = 1
+title.Parent = background
+
+-- Logo
+local logo = Instance.new("ImageLabel")
+logo.Size = UDim2.new(0, 200, 0, 200)
+logo.Position = UDim2.new(0.5, -100, 0.5, -100)
+logo.AnchorPoint = Vector2.new(0.5, 0.5)
+logo.Image = "https://cdn.discordapp.com/icons/1075132840737505441/dd1af779afd4f1329dbd37aaacb4ce52.png?size=4096" -- Provided image URL
+logo.BackgroundTransparency = 1
+logo.Parent = background
+
+-- Loading Text
+local loadingText = Instance.new("TextLabel")
+loadingText.Text = "Loading..."
+loadingText.Size = UDim2.new(0, 200, 0, 50)
+loadingText.Position = UDim2.new(0.5, -100, 0.8, -25)
+loadingText.Font = Enum.Font.SourceSansBold
+loadingText.TextSize = 24
+loadingText.TextColor3 = Color3.new(1, 1, 1)
+loadingText.BackgroundTransparency = 1
+loadingText.Parent = background
+
+-- Rotate animation for logo
+logo.Rotation = 0
+logo:TweenRotate(
+    360, -- End rotation (360 degrees)
+    Enum.EasingDirection.InOut,
+    Enum.EasingStyle.Linear,
+    5, -- Duration (5 seconds)
+    true -- Repeat
+)
+
+-- Fade in animation
+background.BackgroundTransparency = 1 -- Start fully transparent
+background:TweenSizeAndPosition(
+    UDim2.new(1, 0, 1, 0), -- End size
+    UDim2.new(0, 0, 0, 0), -- End position
+    Enum.EasingDirection.InOut,
+    Enum.EasingStyle.Quad,
+    1, -- Duration
+    true
+)
+
+-- Simulate loading time
+wait(10)
+
+-- Fade out animation
+background:TweenSizeAndPosition(
+    UDim2.new(1, 0, 1, 0), -- Start size
+    UDim2.new(0, 0, 1, 0), -- Start position (move it out of the screen)
+    Enum.EasingDirection.InOut,
+    Enum.EasingStyle.Quad,
+    1, -- Duration
+    true
+)
+
+-- Destroy the loading screen after the fade-out animation
+wait(1) -- Wait for the fade-out animation to complete
+loadingScreenGui:Destroy()
